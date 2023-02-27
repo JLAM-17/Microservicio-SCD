@@ -18,7 +18,7 @@ class Api::V1::PreguntasController < ApplicationController
     num_preguntas = params[:num_preguntas].to_i
     tema = params[:tema]
     @questions = Preguntum.where(tema: tema).sample(num_preguntas)
-    render json: @questions
+    render json: @questions, :except => :respuesta_correcta
   end
   def create
     pregunta = Preguntum.create(pregunta_params)
