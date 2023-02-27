@@ -3,6 +3,17 @@ class Api::V1::PreguntasController < ApplicationController
     preguntas = Preguntum.all
     render json: preguntas, status:200
   end
+
+  def validar_respuesta
+  @preguntum = Preguntum.find(params[:id])
+  @respuesta = params[:respuesta]
+  numero = (@preguntum.respuesta_correcta.to_s)
+  @is_correct = @preguntum.send("respuesta_#{numero}").downcase == @respuesta.downcase
+
+  render json: { "ID Pregunta": params[:id],"Resultado": @is_correct }
+
+  end
+
   def generar_preguntas
     num_preguntas = params[:num_preguntas].to_i
     tema = params[:tema]

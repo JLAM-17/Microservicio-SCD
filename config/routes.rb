@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       get 'preguntas/update'
       get 'preguntas/destroy'
       get 'preguntas/generar_preguntas/:num_preguntas/:tema', to: 'preguntas#generar_preguntas'
+      get 'preguntas/validar_respuesta/:id/:respuesta', to: 'preguntas#validar_respuesta'
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
