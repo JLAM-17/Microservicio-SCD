@@ -9,20 +9,28 @@ class Api::V1::PreguntasController < ApplicationController
   @respuesta = params[:respuesta]
   numero = (@preguntum.respuesta_correcta.to_s)
   @is_correct = @preguntum.send("respuesta_#{numero}").downcase == @respuesta.downcase
-
-  render json: { "ID Pregunta": params[:id],"Resultado": @is_correct }
-
+  if @is_correct
+    @answer = "Correcta"
+  else 
+    @answer = "Incorrecta"
   end
+  render json: { "ID Pregunta": params[:id],"Resultado": @answer }
 
+  end  
   def generar_preguntas
-    num_preguntas = params[:num_preguntas].to_i
+    num_preguntas = params[:cantidad].to_i
     tema = params[:tema]
     @questions = Preguntum.where(tema: tema).sample(num_preguntas)
     render json: @questions, :except => :respuesta_correcta
   end
   def create
     pregunta = Preguntum.create(pregunta_params)
-    render json: pregunta
+    if pregunta.save
+      render json: { message: "Pregunta creada!" }, status: :created
+    else
+      render json: { errors: @resource.errors.full_messages }, status: :unprocessable_entity
+    end
+    # render json: { message: "Pregunta guardada!" }, status: :created
   end
   def update
     pregunta = Preguntum.find(params[:id])
@@ -37,4 +45,7 @@ class Api::V1::PreguntasController < ApplicationController
   def pregunta_params
     params.permit(:pregunta, :respuesta_1,:respuesta_2,:respuesta_3,:respuesta_4,:respuesta_correcta,:tema)
   end
+  # def generacion_pregunta_params
+  #   params.permit(:tema,:cantidad)
+  # end
 end
