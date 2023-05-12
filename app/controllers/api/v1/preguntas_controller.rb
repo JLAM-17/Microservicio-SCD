@@ -1,4 +1,6 @@
 class Api::V1::PreguntasController < ApplicationController
+  include ActionView::Helpers::SanitizeHelper
+
   def index
     preguntas = Preguntum.all
     render json: preguntas, status:200
@@ -6,7 +8,7 @@ class Api::V1::PreguntasController < ApplicationController
 
   def validar_respuesta
   @preguntum = Preguntum.find(params[:id])
-  @respuesta = params[:respuesta]
+  @respuesta = sanitize(params[:respuesta])
   numero = (@preguntum.respuesta_correcta.to_s)
   @is_correct = @preguntum.send("respuesta_#{numero}").downcase == @respuesta.downcase
   if @is_correct
@@ -18,8 +20,8 @@ class Api::V1::PreguntasController < ApplicationController
 
   end  
   def generar_preguntas
-    num_preguntas = params[:cantidad].to_i
-    tema = params[:tema]
+    num_preguntas = sanitize(params[:cantidad].to_i)
+    tema = sanitize(params[:tema])
     @questions = Preguntum.where(tema: tema).sample(num_preguntas)
     render json: @questions, :except => :respuesta_correcta
   end
